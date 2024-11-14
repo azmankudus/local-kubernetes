@@ -1,0 +1,74 @@
+= local-kubernetes
+Create local Kubernetes cluster easily.
+
+== Supported Operating System
+* Microsoft Windows 10 and 11
+
+== Prerequisites
+* Oracle VirtualBox
+* Hashicorp Vagrant
+
+== Virtual Machines
+
+[cols=3*^,options=header]
+|===
+||Master|Worker
+
+<|Node count
+|1
+|1
+
+<|vCPU
+|2
+|2
+
+<|Memory
+|2 GB
+|2 GB
+
+<|Disk
+2+|100 GB +
+
+<|Operating System
+2+|Debian 12 +
+(Vagrant box debian/bookworm64)
+
+<|IP Address
+|192.168.8.10 /24|192.168.8.11 /24
+|===
+
+== Steps
+. Clone or download-then-extract this repository.
+. Open Terminal (Command Prompt or PowerShell)
+. Change directory to local-kubernetes
+. Confirm configuration in Vagrantfile
+. Start up the cluster
+----
+> vagrant up
+----
+[start=6]
+. Wait until the above command completed. If UAC prompt appear for Virtualbox, please click "Yes"
+. SSH to master node
+----
+> vagrant ssh master
+----
+[start=8]
+. Check all Kubernetes nodes
+----
+$ kubectl get nodes -o wide
+----
+
+== Processes
+. Vagrant will download the base image of configured operating system.
+. Vagrant will create new VirtualBox virtual machine using the base image. It will perform few prerequisite task then assign the following info for each virtual machine.
+** Hostname
+** IP Address
+. When the virtual machine ready, Vagrant will execute shell scripts to complete the cluster setup.
+** Master node
+... Install containerd, kubelet, kubeadm, kubectl.
+... Initialize Kubernetes cluster
+... Setup Calico pod networking
+** Worker node
+... Install containerd, kubelet, kubeadm, kubectl.
+... Join Kubernetes cluster
+. All above steps will be done 1 virtual machine at a time, starting with master node, then worker node.
