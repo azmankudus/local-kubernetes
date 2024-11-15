@@ -10,6 +10,7 @@ Create local Kubernetes cluster easily.
 
 * Oracle VirtualBox
 * Hashicorp Vagrant
+* OpenSSH Client
 
 == Virtual Machines
 
@@ -47,19 +48,60 @@ Create local Kubernetes cluster easily.
 . Change directory to local-kubernetes
 . Confirm configuration in Vagrantfile
 . Start up the cluster
+
+[source,powershell]
 ----
-> vagrant up
+vagrant up
 ----
+
 [start=6]
 . Wait until the above command completed. If UAC prompt appear for Virtualbox, please click "Yes"
 . SSH to master node
+
+[source,powershell]
 ----
-> vagrant ssh master
+vagrant ssh master
 ----
+
 [start=8]
 . Check all Kubernetes nodes
+
+[source,bash]
 ----
-$ kubectl get nodes -o wide
+sudo kubectl get nodes -o wide
+----
+
+== Customize
+
+. Change Kubernetes version
+
+Update the value of the KUBERNETES_VERSION in Vagrantfile
+
+[source,ruby]
+----
+KUBERNETES_VERSION = "v1.30.0"
+----
+
+You can get list of valid versions using the following command
+
+[source,powershell]
+----
+(Invoke-RestMethod -Uri "https://api.github.com/repos/kubernetes/kubernetes/releases?per_page=100" -UseBasicParsing).tag_name -notmatch "alpha|beta|rc"
+----
+
+[start=2]
+. Create multiple worker nodes
+
+Add or modify the IP_ADDRESSES array, separated by comma. The following example with create 1 master node with 3 worker nodes. First IP address is for master node and the second IP address and below are for worker nodes.
+
+[source,ruby]
+----
+IP_ADDRESSES = [
+  "192.168.8.10", 
+  "192.168.8.11",
+  "192.168.8.12",
+  "192.168.8.13"
+]
 ----
 
 == Processes
