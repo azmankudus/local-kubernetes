@@ -3,9 +3,12 @@
 
 require 'net/http'
 
-KUBERNETES_VERSION = "v1.30.0"
+KUBERNETES_VERSION = "v1.31.2"
 
-IP_ADDRESSES = [ "192.168.8.10", "192.168.8.20", "192.168.8.30" ]
+IP_ADDRESSES = [
+  "192.168.8.10",
+  "192.168.8.11"
+]
 
 r = Net::HTTP.get_response(URI("https://api.github.com/repos/kubernetes/kubernetes/releases/tags/#{KUBERNETES_VERSION}"))
 if r.code.to_i != 200 then
