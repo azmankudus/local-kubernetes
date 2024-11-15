@@ -1,10 +1,21 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+require 'net/http'
+
+KUBERNETES_VERSION = "v1.30.0"
+
+uri = URI("https://api.github.com/repos/kubernetes/kubernetes/releases/tags/#{KUBERNETES_VERSION}")
+res = Net::HTTP.get_response(uri)
+if res.code.to_i != 200 then
+  STDERR.puts "ERROR! Invalid Kubernetes version \"#{KUBERNETES_VERSION}\"."
+end
+
 Vagrant.configure(2) do |c|
   c.vm.box = "debian/bookworm64"
   c.vm.box_check_update = false
   c.vm.box_download_insecure = true
+  c.ssh.insert_key = false
 
   # Master
   c.vm.define "master" do |m|
@@ -14,7 +25,7 @@ Vagrant.configure(2) do |c|
       v.cpus = 2
       v.memory = 2048
     end
-    m.vm.provision "shell", path: "install.sh"
+    m.vm.provision "shell", path: "install.sh", :args => [ KUBERNETES_VERSION ]
     m.vm.provision "shell", path: "master.sh"
   end
 
@@ -26,7 +37,7 @@ Vagrant.configure(2) do |c|
       v.cpus = 2
       v.memory = 2048
     end
-    w.vm.provision "shell", path: "install.sh"
+    w.vm.provision "shell", path: "install.sh", :args => [ KUBERNETES_VERSION ]
     w.vm.provision "shell", path: "worker.sh"
   end
 end

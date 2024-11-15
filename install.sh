@@ -1,5 +1,7 @@
 #!/bin/bash
 
+KUBERNETES_VERSION="$1"
+
 # OS kernel modules
 modprobe overlay
 modprobe br_netfilter
@@ -34,14 +36,18 @@ sed -i 's/SystemdCgroup \= false/SystemdCgroup \= true/' /etc/containerd/config.
 systemctl restart containerd
 
 # Install kubernetes
+KUBERNETES_VERSION_MINOR="$(echo "${KUBERNETES_VERSION}" | awk -F'.' '{print $1"."$2}')"
 apt-get update
 apt-get install -y apt-transport-https ca-certificates curl gnupg
-curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.31/deb/Release.key | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+curl -fsSL https://pkgs.k8s.io/core:/stable:/${KUBERNETES_VERSION_MINOR}/deb/Release.key | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 chmod 644 /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 cat <<EOF > /etc/apt/sources.list.d/kubernetes.list
-deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.31/deb/ /
+deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/${KUBERNETES_VERSION_MINOR}/deb/ /
 EOF
 chmod 644 /etc/apt/sources.list.d/kubernetes.list
 apt-get update
-apt-get install -y kubelet kubeadm kubectl
+KUBELET_VERSION="$(apt-cache madison kubelet | grep ${KUBERNETES_VERSION:1} | head -1 | awk '{print $3}')"
+KUBEADM_VERSION="$(apt-cache madison kubeadm | grep ${KUBERNETES_VERSION:1} | head -1 | awk '{print $3}')"
+KUBECTL_VERSION="$(apt-cache madison kubectl | grep ${KUBERNETES_VERSION:1} | head -1 | awk '{print $3}')"
+apt-get install -y kubelet=${KUBELET_VERSION} kubeadm=${KUBEADM_VERSION} kubectl=${KUBECTL_VERSION}
 apt-mark hold kubelet kubeadm kubectl
