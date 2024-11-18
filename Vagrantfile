@@ -29,8 +29,8 @@ Vagrant.configure(2) do |c|
       v.cpus = 2
       v.memory = 2048
     end
-    m.vm.provision "shell", path: "install.sh", :args => [ KUBERNETES_VERSION ]
-    m.vm.provision "shell", path: "master.sh", :args => [ IP_ADDRESSES[0] ]
+    m.vm.provision "shell", path: "provision/install.sh", :args => [ KUBERNETES_VERSION ]
+    m.vm.provision "shell", path: "provision/master.sh", :args => [ IP_ADDRESSES[0] ]
   end
 
   # Worker
@@ -42,8 +42,8 @@ Vagrant.configure(2) do |c|
         v.cpus = 2
         v.memory = 2048
       end
-      w.vm.provision "shell", path: "install.sh", :args => [ KUBERNETES_VERSION ]
-      w.vm.provision "shell", path: "worker.sh", :args => [ IP_ADDRESSES[i] ]
+      w.vm.provision "shell", path: "provision/install.sh", :args => [ KUBERNETES_VERSION ]
+      w.vm.provision "shell", path: "provision/worker.sh", :args => [ IP_ADDRESSES[i] ]
     end
   end
 end
