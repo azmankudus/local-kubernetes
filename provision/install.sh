@@ -51,3 +51,9 @@ KUBEADM_VERSION="$(apt-cache madison kubeadm | grep ${KUBERNETES_VERSION:1} | he
 KUBECTL_VERSION="$(apt-cache madison kubectl | grep ${KUBERNETES_VERSION:1} | head -1 | awk '{print $3}')"
 apt-get install -y kubelet=${KUBELET_VERSION} kubeadm=${KUBEADM_VERSION} kubectl=${KUBECTL_VERSION}
 apt-mark hold kubelet kubeadm kubectl
+
+# Add alias k for kubectl
+cat <<EOF >> /root/.bashrc
+
+alias k=kubectl
+EOF
