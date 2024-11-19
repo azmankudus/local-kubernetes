@@ -8,7 +8,7 @@ RELEASE_NAME="etcd-${LATEST_VERSION}-linux-amd64"
 curl -sL "https://github.com/etcd-io/etcd/releases/download/${LATEST_VERSION}/${RELEASE_NAME}.tar.gz" -o ${RELEASE_NAME}.tar.gz
 tar -xzf ${RELEASE_NAME}.tar.gz --strip-components=1 -C /usr/bin/ ${RELEASE_NAME}/etcdctl
 rm -f ${RELEASE_NAME}.tar.gz
-chown root:root /usr/bin/etcdctl
+chown root:root /usr/bin/etcdutl
 chmod 755 /usr/bin/etcdctl
 echo "alias e=etcdctl" >> /root/.bashrc
 echo "alias e=etcdctl" >> /home/vagrant/.bashrc
