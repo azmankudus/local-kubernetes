@@ -19,7 +19,7 @@ Vagrant.configure(2) do |c|
   c.vm.box = "debian/bookworm64"
   c.vm.box_check_update = false
   c.vm.box_download_insecure = true
-  c.ssh.insert_key = false
+  # c.ssh.insert_key = false
 
   # Master
   c.vm.define "master" do |m|
