@@ -119,3 +119,8 @@ IP_ADDRESSES = [
 ... Install containerd, kubelet, kubeadm, kubectl.
 ... Join Kubernetes cluster
 . All above steps will be done 1 virtual machine at a time, starting with master node, then worker node.
+
+
+== Troubleshooting
+
+. If `vagrant ssh <node>` gives error `Permission denied`, please uncomment line with `c.ssh.insert_key` in `Vagrantfile`
