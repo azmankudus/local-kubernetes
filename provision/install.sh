@@ -57,3 +57,7 @@ cat <<EOF >> /root/.bashrc
 
 alias k=kubectl
 EOF
+cat <<EOF >> /home/vagrant/.bashrc
+
+alias k=kubectl
+EOF

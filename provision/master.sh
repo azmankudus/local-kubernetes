@@ -13,8 +13,12 @@ sed -i "/KUBELET_KUBEADM_ARGS/ s/\"$/ \-\-node\-ip\=${REGEX_MASTER_IP}\"/" /var/
 systemctl restart kubelet
 
 # Update user config
-mkdir $HOME/.kube
-cp -p /vagrant/cluster/admin.conf $HOME/.kube/config
+mkdir /root/.kube
+cp -p /vagrant/cluster/admin.conf /root/.kube/config
+chown root:root /root/.kube/config
+mkdir /home/vagrant/.kube
+cp -p /vagrant/cluster/admin.conf /home/vagrant/.kube/config
+chown vagrant:vagrant /home/vagrant/.kube/config
 
 # Setup networking
 kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
