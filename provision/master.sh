@@ -2,16 +2,16 @@
 
 MASTER_IP="$1"
 
-# Install etcdctl
+# Install etcdutl
 LATEST_VERSION="$(curl -sL https://api.github.com/repos/etcd-io/etcd/releases/latest | grep '"tag_name"' | awk -F'"' '{print $4}')"
 RELEASE_NAME="etcd-${LATEST_VERSION}-linux-amd64"
 curl -sL "https://github.com/etcd-io/etcd/releases/download/${LATEST_VERSION}/${RELEASE_NAME}.tar.gz" -o ${RELEASE_NAME}.tar.gz
-tar -xzf ${RELEASE_NAME}.tar.gz --strip-components=1 -C /usr/bin/ ${RELEASE_NAME}/etcdctl
+tar -xzf ${RELEASE_NAME}.tar.gz --strip-components=1 -C /usr/bin/ ${RELEASE_NAME}/etcdutl
 rm -f ${RELEASE_NAME}.tar.gz
 chown root:root /usr/bin/etcdutl
-chmod 755 /usr/bin/etcdctl
-echo "alias e=etcdctl" >> /root/.bashrc
-echo "alias e=etcdctl" >> /home/vagrant/.bashrc
+chmod 755 /usr/bin/etcdutl
+echo "alias e=etcdutl" >> /root/.bashrc
+echo "alias e=etcdutl" >> /home/vagrant/.bashrc
 
 # Initialize master node
 kubeadm init --pod-network-cidr=10.10.0.0/16 --apiserver-advertise-address=${MASTER_IP}
