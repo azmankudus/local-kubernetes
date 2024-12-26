@@ -8,7 +8,8 @@ KUBERNETES_VERSION = ""
 
 IP_ADDRESSES = [
   "192.168.8.10",
-  "192.168.8.11"
+  "192.168.8.12",
+  "192.168.8.13"
 ]
 
 if defined?(KUBERNETES_VERSION) || my_variable.to_s.strip.empty? then
