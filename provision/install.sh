@@ -62,9 +62,9 @@ sed -i -e "s/${CTR_SANDBOX_2}/${K8S_SANDBOX_2}/g" /etc/containerd/config.toml
 systemctl restart containerd
 
 # Install etcdctl/etcdutl
-LATEST_VERSION="$(curl -sL https://api.github.com/repos/etcd-io/etcd/releases/latest | grep '"tag_name"' | awk -F'"' '{print $4}')"
-RELEASE_NAME="etcd-${LATEST_VERSION}-linux-amd64"
-curl -sL "https://github.com/etcd-io/etcd/releases/download/${LATEST_VERSION}/${RELEASE_NAME}.tar.gz" -o ${RELEASE_NAME}.tar.gz
+ETCD_VERSION="v$(kubeadm config images list | grep 'registry.k8s.io/etcd' | awk -F':' '{print $2}' | awk -F'-' '{print $1}')"
+RELEASE_NAME="etcd-${ETCD_VERSION}-linux-amd64"
+curl -sL "https://github.com/etcd-io/etcd/releases/download/${ETCD_VERSION}/${RELEASE_NAME}.tar.gz" -o ${RELEASE_NAME}.tar.gz
 tar -xzf ${RELEASE_NAME}.tar.gz --strip-components=1 -C /usr/bin/ ${RELEASE_NAME}/etcdctl ${RELEASE_NAME}/etcdutl
 rm -f ${RELEASE_NAME}.tar.gz
 chown root:root /usr/bin/etcdctl
