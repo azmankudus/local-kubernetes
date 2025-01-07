@@ -11,7 +11,6 @@ rm -f ${RELEASE_NAME}.tar.gz
 chown root:root /usr/bin/etcdutl
 chmod 755 /usr/bin/etcdutl
 echo "alias e=etcdutl" >> /root/.bashrc
-echo "alias e=etcdutl" >> /home/vagrant/.bashrc
 
 # Sync containerd sandbox image from kubeadm images list
 SANDBOX_IMAGE='registry.k8s.io/pause'
@@ -36,9 +35,6 @@ systemctl restart kubelet
 mkdir /root/.kube
 cp -p /vagrant/cluster/admin.conf /root/.kube/config
 chown root:root /root/.kube/config
-mkdir /home/vagrant/.kube
-cp -p /vagrant/cluster/admin.conf /home/vagrant/.kube/config
-chown vagrant:vagrant /home/vagrant/.kube/config
 
 # Setup networking
 kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml

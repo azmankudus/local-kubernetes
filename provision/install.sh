@@ -57,7 +57,7 @@ cat <<EOF >> /root/.bashrc
 
 alias k=kubectl
 EOF
-cat <<EOF >> /home/vagrant/.bashrc
+cat <<EOF >> /home/vagrant/.bash_profile
 
-alias k=kubectl
+sudo -i
 EOF
