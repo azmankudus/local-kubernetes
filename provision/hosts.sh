@@ -22,8 +22,11 @@ Host ${NAME}
   PubKeyAuthentication yes
   IdentityFile /root/.ssh/id_ed25519
   StrictHostKeyChecking no
+
 EOF
 done
+
+chmod 600 /root/.ssh/config
 
 # Auto login to root
 echo '' >> /home/vagrant/.bash_profile
