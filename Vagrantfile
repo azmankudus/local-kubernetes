@@ -12,6 +12,8 @@ MASTER_NAME          = "master"
 WORKER_PREFIX        = "worker"
 WORKER_NUMBER_LENGTH = 2
 
+VM_PROVIDER = "virtualbox" # do not change
+
 segment_ip = START_IP_ADDRESS.split(".")
 start_ip = segment_ip[3].to_i
 segment_ip.delete_at(3)
@@ -34,19 +36,21 @@ worker_name_format = WORKER_PREFIX + "%0#{WORKER_NUMBER_LENGTH}d"
   ip_host_list << worker_name_format % i
 end
 
-if defined?(KUBERNETES_VERSION) || my_variable.to_s.strip.empty? then
-  r = Net::HTTP.get_response(URI("https://api.github.com/repos/kubernetes/kubernetes/releases/latest"))
-  latest_version = JSON.parse(r.body)
-  KUBERNETES_VERSION = latest_version["tag_name"]
-else
-  r = Net::HTTP.get_response(URI("https://api.github.com/repos/kubernetes/kubernetes/releases/tags/#{KUBERNETES_VERSION}"))
-  if r.code.to_i != 200 then
-    STDERR.puts "ERROR! Invalid Kubernetes version \"#{KUBERNETES_VERSION}\"."
-    exit(1)
+if !File.exist?(".vagrant/machines/#{MASTER_NAME}/#{VM_PROVIDER}/action_provision")
+  if defined?(KUBERNETES_VERSION) || my_variable.to_s.strip.empty? then
+    r = Net::HTTP.get_response(URI("https://api.github.com/repos/kubernetes/kubernetes/releases/latest"))
+    latest_version = JSON.parse(r.body)
+    KUBERNETES_VERSION = latest_version["tag_name"]
+  else
+    r = Net::HTTP.get_response(URI("https://api.github.com/repos/kubernetes/kubernetes/releases/tags/#{KUBERNETES_VERSION}"))
+    if r.code.to_i != 200 then
+      STDERR.puts "ERROR! Invalid Kubernetes version \"#{KUBERNETES_VERSION}\"."
+      exit(1)
+    end
   end
-end
 
-puts "##### Kubernetes #{KUBERNETES_VERSION} #####"
+  puts "##### Kubernetes #{KUBERNETES_VERSION} #####"
+end
 
 Vagrant.configure(2) do |c|
   c.vm.box = "debian/bookworm64"
@@ -59,7 +63,7 @@ Vagrant.configure(2) do |c|
   c.vm.define master_name do |m|
     m.vm.hostname = master_name
     m.vm.network "private_network", ip: ip_host_list[0]
-    m.vm.provider "virtualbox" do |v|
+    m.vm.provider VM_PROVIDER do |v|
       v.cpus = 2
       v.memory = 2048
     end
@@ -74,7 +78,7 @@ Vagrant.configure(2) do |c|
     c.vm.define worker_name do |w|
       w.vm.hostname = worker_name
       w.vm.network "private_network", ip: ip_host_list[i * 2]
-      w.vm.provider "virtualbox" do |v|
+      w.vm.provider VM_PROVIDER do |v|
         v.cpus = 2
         v.memory = 2048
       end
