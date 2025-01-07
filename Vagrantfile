@@ -6,9 +6,12 @@ require 'json'
 
 KUBERNETES_VERSION = ""
 
+MASTER_NAME = "master"
+WORKERS_NAME = "worker%02d"
+
 IP_ADDRESSES = [
   "192.168.8.10",
-  "192.168.8.11",
+  "192.168.8.11", 
   "192.168.8.12"
 ]
 
@@ -26,6 +29,15 @@ end
 
 puts "##### Kubernetes #{KUBERNETES_VERSION} #####"
 
+IPS_NODES = []
+IPS_NODES << IP_ADDRESSES[0]
+IPS_NODES << MASTER_NAME
+
+(1..IP_ADDRESSES.length - 1).each do |i|
+  IPS_NODES << IP_ADDRESSES[i]
+  IPS_NODES << WORKERS_NAME % i
+end
+
 Vagrant.configure(2) do |c|
   c.vm.box = "debian/bookworm64"
   c.vm.box_check_update = false
@@ -42,12 +54,14 @@ Vagrant.configure(2) do |c|
     end
     m.vm.provision "shell", path: "provision/install.sh", :args => [ KUBERNETES_VERSION ]
     m.vm.provision "shell", path: "provision/master.sh", :args => [ IP_ADDRESSES[0] ]
+    m.vm.provision "shell", path: "provision/hosts.sh", :args => IPS_NODES
   end
 
   # Worker
   (1..IP_ADDRESSES.length - 1).each do |i|
-    c.vm.define "worker#{i}" do |w|
-      w.vm.hostname = "worker#{i}"
+    worker_name = WORKERS_NAME % i
+    c.vm.define worker_name do |w|
+      w.vm.hostname = worker_name
       w.vm.network "private_network", ip: IP_ADDRESSES[i]
       w.vm.provider "virtualbox" do |v|
         v.cpus = 2
@@ -55,6 +69,7 @@ Vagrant.configure(2) do |c|
       end
       w.vm.provision "shell", path: "provision/install.sh", :args => [ KUBERNETES_VERSION ]
       w.vm.provision "shell", path: "provision/worker.sh", :args => [ IP_ADDRESSES[i] ]
+      w.vm.provision "shell", path: "provision/hosts.sh", :args => IPS_NODES
     end
   end
 end
