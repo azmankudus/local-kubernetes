@@ -14,6 +14,3 @@ systemctl restart kubelet
 mkdir /root/.kube
 cp -p /vagrant/cluster/admin.conf /root/.kube/config
 chown root:root /root/.kube/config
-mkdir /home/vagrant/.kube
-cp -p /vagrant/cluster/admin.conf /home/vagrant/.kube/config
-chown vagrant:vagrant /home/vagrant/.kube/config
