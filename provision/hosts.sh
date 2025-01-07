@@ -12,7 +12,7 @@ for ((i=0; i<${#ARGS[@]}; i++)); do
 
   # update hosts entries
   sed -i "/${NAME}/d" /etc/hosts
-  printf "%-16s %s \n" ${IP} ${NAME} >> /etc/hosts
+  printf "%-15s %s \n" ${IP} ${NAME} >> /etc/hosts
 
   # create ssh config
   cat <<EOF >> /root/.ssh/config
