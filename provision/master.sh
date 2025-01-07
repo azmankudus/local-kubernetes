@@ -17,8 +17,12 @@ mkdir /root/.kube
 cp -p /vagrant/cluster/admin.conf /root/.kube/config
 chown root:root /root/.kube/config
 
-# Setup networking
+# Setup calico networking
 kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
+
+# Setup local-path storage class
+LATEST_VERSION="$(curl -sL https://api.github.com/repos/rancher/local-path-provisioner/releases/latest | grep '"tag_name"' | awk -F'"' '{print $4}')"
+kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/${LATEST_VERSION}/deploy/local-path-storage.yaml
 
 # Generate join script
 kubeadm token create --print-join-command > /vagrant/cluster/join.sh
