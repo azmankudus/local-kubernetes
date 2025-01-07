@@ -2,6 +2,9 @@
 
 MASTER_IP="$1"
 
+# Download images
+kubeadm config images pull
+
 # Initialize master node
 kubeadm init --pod-network-cidr=10.10.0.0/16 --apiserver-advertise-address=${MASTER_IP}
 mkdir -p /vagrant/cluster
