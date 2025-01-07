@@ -74,7 +74,5 @@ chmod 755 /usr/bin/etcdutl
 echo "alias e=etcdutl" >> /root/.bashrc
 
 # Add alias k for kubectl
-cat <<EOF >> /root/.bashrc
-
-alias k=kubectl
-EOF
+echo '' >> /root/.bashrc
+echo 'alias k=kubectl' >> /root/.bashrc
