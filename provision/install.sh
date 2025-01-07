@@ -33,6 +33,14 @@ apt-mark hold containerd.io
 mkdir -p /etc/containerd
 containerd config default > /etc/containerd/config.toml
 sed -i 's/SystemdCgroup \= false/SystemdCgroup \= true/' /etc/containerd/config.toml
+
+# Sync containerd sandbox image from kubeadm images list
+SANDBOX_IMAGE='registry.k8s.io/pause'
+CTR_SANDBOX="$(grep "${SANDBOX_IMAGE}" /etc/containerd/config.toml | awk -F'"' '{print $2}')"
+K8S_SANDBOX="$(kubeadm config images list | grep ${SANDBOX_IMAGE})"
+CTR_SANDBOX_2="$(echo ${CTR_SANDBOX} | sed -e 's/\//\\\//g' -e 's/\./\\\./g')"
+K8S_SANDBOX_2="$(echo ${K8S_SANDBOX} | sed -e 's/\//\\\//g' -e 's/\./\\\./g')"
+sed -i -e "s/${CTR_SANDBOX_2}/${K8S_SANDBOX_2}/g" /etc/containerd/config.toml
 systemctl restart containerd
 
 # Install kubernetes
@@ -51,6 +59,18 @@ KUBEADM_VERSION="$(apt-cache madison kubeadm | grep ${KUBERNETES_VERSION:1} | he
 KUBECTL_VERSION="$(apt-cache madison kubectl | grep ${KUBERNETES_VERSION:1} | head -1 | awk '{print $3}')"
 apt-get install -y kubelet=${KUBELET_VERSION} kubeadm=${KUBEADM_VERSION} kubectl=${KUBECTL_VERSION}
 apt-mark hold kubelet kubeadm kubectl
+
+# Install etcdctl/etcdutl
+LATEST_VERSION="$(curl -sL https://api.github.com/repos/etcd-io/etcd/releases/latest | grep '"tag_name"' | awk -F'"' '{print $4}')"
+RELEASE_NAME="etcd-${LATEST_VERSION}-linux-amd64"
+curl -sL "https://github.com/etcd-io/etcd/releases/download/${LATEST_VERSION}/${RELEASE_NAME}.tar.gz" -o ${RELEASE_NAME}.tar.gz
+tar -xzf ${RELEASE_NAME}.tar.gz --strip-components=1 -C /usr/bin/ ${RELEASE_NAME}/etcdctl ${RELEASE_NAME}/etcdutl
+rm -f ${RELEASE_NAME}.tar.gz
+chown root:root /usr/bin/etcdctl
+chmod 755 /usr/bin/etcdctl
+chown root:root /usr/bin/etcdutl
+chmod 755 /usr/bin/etcdutl
+echo "alias e=etcdutl" >> /root/.bashrc
 
 # Add alias k for kubectl
 cat <<EOF >> /root/.bashrc
