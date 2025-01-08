@@ -1,26 +1,33 @@
-= local-kubernetes
+= image:https://skills-icons.vercel.app/api/icons?i=kubernetes[,30,30] local-kubernetes 
+:toc:
+
+== &#x1F3AF; Goal
 
 Create local Kubernetes cluster easily.
 
-== Supported Operating System
+&#x26A0; Currently support single cluster only.
 
-* Microsoft Windows 10 and 11
 
-== Prerequisites
 
-* Oracle VirtualBox
+== &#x2699; Supported Operating System
+
+* Microsoft Windows 10 image:https://skills-icons.vercel.app/api/icons?i=windows[,20,20]
+* Microsoft Windows 11 image:https://skills-icons.vercel.app/api/icons?i=windows[,20,20]
+
+== &#x2705; Prerequisites
+
+* Oracle VirtualBox image:https://skills-icons.vercel.app/api/icons?i=virtualbox[,30,30]
 * Hashicorp Vagrant
-* OpenSSH Client
 
-== Virtual Machines
+== &#x1F4BB; Virtual Machines
 
 [cols=3*^,options=header]
 |===
-||Master|Worker
+||Master &#x1F947; |Worker &#x1F948;
 
 <|Node count
 |1
-|1
+|2
 
 <|vCPU
 |2
@@ -34,14 +41,15 @@ Create local Kubernetes cluster easily.
 2+|100 GB +
 
 <|Operating System
-2+|Debian 12 +
+2+|Debian 12 image:https://skills-icons.vercel.app/api/icons?i=debian[,20,20] +
 (Vagrant box debian/bookworm64)
 
-<|IP Address
-|192.168.8.10 /24|192.168.8.11 /24
+<|IP Addresses
+|192.168.8.10 /24|192.168.8.11 /24 +
+192.168.8.12 /24
 |===
 
-== Steps
+== &#x1F680; Kickstart
 
 . Clone or download-then-extract this repository.
 . Open Terminal (Command Prompt or PowerShell)
@@ -68,10 +76,10 @@ vagrant ssh master
 
 [source,bash]
 ----
-sudo kubectl get nodes -o wide
+kubectl get nodes -o wide
 ----
 
-== Customize
+== &#x1F6E0; Customize
 
 . Change Kubernetes version
 
@@ -90,21 +98,39 @@ You can get list of valid versions using the following command
 ----
 
 [start=2]
-. Create multiple worker nodes
+. Different number of worker nodes
 
-Add or modify the IP_ADDRESSES array, separated by comma. The following example with create 1 master node with 3 worker nodes. First IP address is for master node and the second IP address and below are for worker nodes.
+Update WORKER_NODES value to the desired number of worker nodes. Minimum 1, maximum up to the computer available resource.
 
 [source,ruby]
 ----
-IP_ADDRESSES = [
-  "192.168.8.10", 
-  "192.168.8.11",
-  "192.168.8.12",
-  "192.168.8.13"
-]
+WORKER_NODES = 1   # single worker node only
+WORKER_NODES = 4   # 4 worker nodes
 ----
 
-== Processes
+[start=3]
+. Different master and worker names
+
+Update `MASTER_NAME` and `WORKER_PREFIX` values.
+
+[source,ruby]
+----
+# example: to match with killercoda
+MASTER_NAME   = "controlplane"
+WORKER_PREFIX = "node"   
+----
+
+[start=4]
+. Different number of digits of worker nodes name postfix.
+
+Update `WORKER_NUMBER_LENGTH` values.
+
+[source,ruby]
+----
+WORKER_NUMBER_LENGTH = 4   # 4 digits with leading zeroes
+----
+
+== &#x23E9; How it works
 
 . Vagrant will download the base image of configured operating system.
 . Vagrant will create new VirtualBox virtual machine using the base image. It will perform few prerequisite task then assign the following info for each virtual machine.
@@ -112,15 +138,22 @@ IP_ADDRESSES = [
 ** IP Address
 . When the virtual machine ready, Vagrant will execute shell scripts to complete the cluster setup.
 ** Master node
-... Install containerd, kubelet, kubeadm, kubectl.
-... Initialize Kubernetes cluster
-... Setup Calico pod networking
-** Worker node
-... Install containerd, kubelet, kubeadm, kubectl.
-... Join Kubernetes cluster
+... Install containerd, kubelet, kubeadm, kubectl, etcdctl, helm.
+... Initialize Kubernetes cluster.
+... Setup Calico pod networking with CIDR 10.10.0.0/16.
+... Setup Rancher local-path storage provisioner and class.
+... Create /etc/hosts entries.
+... Create SSH keys and config.
+** Worker nodes
+... Install containerd, kubelet, kubeadm.
+... Join Kubernetes cluster.
+... Create /etc/hosts entries.
+... Create SSH config and copy keys from master.
 . All above steps will be done 1 virtual machine at a time, starting with master node, then worker node.
 
 
-== Troubleshooting
+== &#x1FA7A; Troubleshooting
 
 . If `vagrant ssh <node>` gives error `Permission denied`, please uncomment line with `c.ssh.insert_key` in `Vagrantfile`
+
+. If IP addresses already in use, please change the `START_IP_ADDRESS` line with valid /24 IP address
