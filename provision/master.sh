@@ -30,7 +30,7 @@ apt-get update
 apt-get install -y helm
 
 # Download images
-kubeadm config images pull
+kubeadm config images pull --kubernetes-version=${KUBERNETES_VERSION}
 
 # Initialize master node
 kubeadm init --pod-network-cidr=10.10.0.0/16 --apiserver-advertise-address=${MASTER_IP}
