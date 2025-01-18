@@ -37,7 +37,7 @@ worker_name_format = WORKER_PREFIX + "%0#{WORKER_NUMBER_LENGTH}d"
 end
 
 if !File.exist?(".vagrant/machines/#{MASTER_NAME}/#{VM_PROVIDER}/action_provision")
-  if defined?(KUBERNETES_VERSION) || my_variable.to_s.strip.empty? then
+  if !defined?(KUBERNETES_VERSION) || KUBERNETES_VERSION.to_s.strip.empty? then
     r = Net::HTTP.get_response(URI("https://api.github.com/repos/kubernetes/kubernetes/releases/latest"))
     latest_version = JSON.parse(r.body)
     KUBERNETES_VERSION = latest_version["tag_name"]
