@@ -16,6 +16,10 @@ Create local Kubernetes cluster easily.
 
 == &#x2705; Prerequisites
 
+* At least quad core CPU
+* At least 6 GB RAM free
+* At least 32 GB SSD free space
+
 * Oracle VirtualBox image:https://skills-icons.vercel.app/api/icons?i=virtualbox[,30,30]
 * Hashicorp Vagrant
 
@@ -38,7 +42,8 @@ Create local Kubernetes cluster easily.
 |2 GB
 
 <|Disk
-2+|100 GB +
+|16 GB
+|8 GB
 
 <|Operating System
 2+|Debian 12 image:https://skills-icons.vercel.app/api/icons?i=debian[,20,20] +
